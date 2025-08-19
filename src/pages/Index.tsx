@@ -1,14 +1,56 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import AssessmentLanding from "@/components/AssessmentLanding";
+import AssessmentFlow from "@/components/AssessmentFlow";
+import AssessmentResults from "@/components/AssessmentResults";
+
+type AppState = "landing" | "assessment" | "results";
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [currentState, setCurrentState] = useState<AppState>("landing");
+  const [assessmentResults, setAssessmentResults] = useState<any>(null);
+
+  const handleStartAssessment = () => {
+    setCurrentState("assessment");
+  };
+
+  const handleAssessmentComplete = (results: any) => {
+    setAssessmentResults(results);
+    setCurrentState("results");
+  };
+
+  const handleBackToLanding = () => {
+    setCurrentState("landing");
+  };
+
+  const handleRestart = () => {
+    setAssessmentResults(null);
+    setCurrentState("landing");
+  };
+
+  // Render the appropriate component based on current state
+  switch (currentState) {
+    case "landing":
+      return <AssessmentLanding onStartAssessment={handleStartAssessment} />;
+    
+    case "assessment":
+      return (
+        <AssessmentFlow
+          onComplete={handleAssessmentComplete}
+          onBack={handleBackToLanding}
+        />
+      );
+    
+    case "results":
+      return (
+        <AssessmentResults
+          results={assessmentResults}
+          onRestart={handleRestart}
+        />
+      );
+    
+    default:
+      return <AssessmentLanding onStartAssessment={handleStartAssessment} />;
+  }
 };
 
 export default Index;
